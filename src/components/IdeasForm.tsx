@@ -1,11 +1,11 @@
 // src/components/IdeasForm.tsx
 "use client";
 
-import { useIdeas } from "../../hooks/useIdea";
+import { useIdeasStore } from "../../stores/IdeasStore";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function IdeasForm() {
-  const { add } = useIdeas();
+  const { add } = useIdeasStore();
   const { current: user } = useAuth();
 
   const handleAddIdea = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -15,18 +15,17 @@ export default function IdeasForm() {
 
     if (!user) return;
 
-    const postIdeaData = {
+    await add({
       userId: user.$id,
       title: formData.get("title") as string,
       description: formData.get("description") as string,
-    };
+    });
 
-    await add(postIdeaData);
     form.reset();
   };
 
   if (!user) {
-    return null; // Don't render form if user is not logged in
+    return null;
   }
 
   return (

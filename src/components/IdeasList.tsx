@@ -1,12 +1,18 @@
 // src/components/IdeasList.tsx
 "use client";
 
-import { useIdeas } from "../../hooks/useIdea";
+import { useIdeasStore } from "../../stores/IdeasStore";
 import { useAuth } from "../../hooks/useAuth";
+import { useEffect } from "react";
 
 export default function IdeasList() {
-  const { current: ideas, loading, remove } = useIdeas();
+  const { ideas, loading, remove, fetch } = useIdeasStore();
   const { current: user } = useAuth();
+
+  // fetch once when mounted
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
 
   if (loading) {
     return <div>Loading ideas...</div>;

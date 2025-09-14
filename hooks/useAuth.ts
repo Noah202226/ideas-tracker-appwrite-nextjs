@@ -34,8 +34,11 @@ export function useAuth() {
 
   const getCurrentUser = async () => {
     try {
-      const user = await account.get();
-      setCurrent(user);
+      await account
+        .get()
+        .then((res) => setCurrent(res))
+        .catch(() => setCurrent(null))
+        .finally(() => setLoading(false));
     } catch (error) {
       console.log("No current user", error);
       setCurrent(null);
