@@ -5,7 +5,6 @@ import {
   ID,
   Query,
   Permission,
-  Account,
   type Models,
 } from "appwrite";
 
@@ -15,7 +14,6 @@ const client = new Client()
   .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
 
 const databases = new Databases(client);
-const account = new Account(client);
 
 const databaseId = process.env.NEXT_PUBLIC_DATABASE_ID!;
 const collectionId = process.env.NEXT_PUBLIC_TABLE_ID!;
@@ -52,20 +50,6 @@ export const useIdeasStore = create<IdeasStore>((set, get) => ({
   fetch: async () => {
     set({ loading: true });
     try {
-      // 🔑 Ensure session first (guest or logged in)
-      let user = await account.get().catch(() => null);
-
-      if (!user) {
-        // Create anonymous session for guests
-        try {
-          await account.createAnonymousSession();
-          user = await account.get();
-          console.log("Anonymous user created:", user.$id);
-        } catch (anonErr) {
-          console.error("Failed to create anonymous session:", anonErr);
-        }
-      }
-
       const res = await databases.listDocuments<Idea>(
         databaseId,
         collectionId,
